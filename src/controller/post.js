@@ -83,6 +83,44 @@ const deleteAPost = asyncHandler(async(req,res)=>{
     }
 })
 
+const findPost = asyncHandler(async(req,res)=>{
+    try{
+        const latitude = req.body.latitude
+        const longtitude = req.body.longtitude
+
+        const post_data = await Post.aggregate([{
+            $geoNear: {
+                near : {type: 'Point', coordinates: [parseFloat(longtitude), parseFloat(latitude)]},
+                key : "location",
+                maxDistance: parseFloat(1000)*1609,
+                distanceField: "dist.calculated",
+                spherical: true
+            },
+           
+        }])
+
+        res.status(200).send({data: post_data})
+    }
+    catch(err){
+        return res.status(500).send({ status: false, message: err.message }) 
+    }
+})
+
+const getAllPost = asyncHandler(async(req,res)=>{
+    try{
+        // let { title, body, ...rest } = req.query
+      
+        const allPost = await Post.find().where("active").equals('true').exec()
+        console.log(allPost)
+        res.status(200).send({msg:"success",count:allPost.length, data: allPost})
+
+    }
+    catch(err){
+        return res.status(500).send({ status: false, message: err.message }) 
+    }
+    
+})
 
 
-module.exports = {createPost, getPostById, updateAPost,deleteAPost }
+
+module.exports = {createPost, getPostById, updateAPost,deleteAPost, findPost, getAllPost }

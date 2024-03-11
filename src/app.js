@@ -54,7 +54,7 @@ if(process.env.NODE_ENV !== "PRODUCTION"){
 }
 
 app.get("/", (req,res)=>{
-    res.send(`<a href="http://localhost:4000/google">Login With Google</a>`)
+    res.send(`<a href="http://localhost:7000/google">Login With Google</a>`)
 })
 app.use("/", googleRouter)
 
